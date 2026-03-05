@@ -467,16 +467,17 @@
 .story-meta {
     display: flex;
     align-items: baseline;
-    gap: 8px;
-    margin: 0 4px 6px 4px;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin: 4px 4px 0 4px;
     padding: 0;
-    font-size: 14px;
-    line-height: 1;
+    font-size: 13px;
+    line-height: 1.3;
 }
 
 .story-publication {
     font-weight: 600;
-    font-size: 15px;
+    font-size: 12px;
     color: var(--primary-blue, #1a365d);
 }
 
@@ -484,15 +485,14 @@
     color: var(--text-muted, #718096);
     font-weight: 400;
     font-size: 12px;
-    margin: 2px 4px 4px 4px;
     line-height: 1.2;
 }
 
 h3.story-title {
     font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 600;
-    margin: 2px 4px 4px 4px;
+    margin: 0 4px 2px 4px;
     padding: 0;
     padding-right: 80px;
     line-height: 1.3;
@@ -505,45 +505,59 @@ h3.story-title {
 }
 
 .story-authors {
-    margin: 4px 4px 2px 4px;
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 400;
     color: var(--text-muted, #718096);
 }
 
 .story-quote {
-    margin: 6px 4px 4px 8px;
+    margin: 0 4px 12px 0;
     padding: 4px 0 4px 10px;
     border-left: 3px solid var(--accent-red, #c53030);
     font-style: italic;
-    font-size: 13px;
+    font-size: 14px;
     color: #4a5568;
     line-height: 1.4;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.story-quote:hover {
+    border-left-color: var(--primary-blue, #1a365d);
+    color: var(--primary-blue, #1a365d);
 }
 
 blockquote.story-quote {
     text-decoration: none;
 }
 
-.story-bias {
-    position: absolute;
-    top: 14px;
-    right: 10px;
-    font-size: 11px;
-    font-weight: 500;
-    white-space: nowrap;
-    flex-shrink: 0;
-    padding: 2px 8px;
-    border-radius: 3px;
-    background: rgba(0,0,0,0.05);
+.story-quote .link-highlight {
+    background: rgba(253, 224, 71, 0.4);
+    color: inherit;
+    font-style: inherit;
+    padding: 1px 2px;
+    border-radius: 2px;
 }
 
-/* Bias colors */
-.bias-right { color: #c53030; }
-.bias-center-right { color: #dd6b20; }
-.bias-center { color: #718096; }
-.bias-center-left { color: #3182ce; }
-.bias-left { color: #2b6cb0; }
+/* Theme pills container */
+.story-theme-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+    margin-left: 4px;
+}
+
+.story-theme-pill {
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+    padding: 2px 8px;
+    border-radius: 3px;
+    background: rgba(26, 54, 93, 0.1);
+    color: var(--primary-blue, #1a365d);
+    border: 1px solid rgba(26, 54, 93, 0.2);
+}
 
 .story-excerpt {
     font-size: 14px;
@@ -566,48 +580,6 @@ blockquote.story-quote {
     opacity: 0.7;
 }
 
-/* ========================================
-   POLITICAL ORIENTATION TAG
-   ======================================== */
-
-.story-bias {
-    position: absolute;
-    top: 14px;
-    right: 10px;
-    font-size: 11px;
-    font-weight: 500;
-    white-space: nowrap;
-    flex-shrink: 0;
-    padding: 2px 8px;
-    border-radius: 3px;
-    background: #e2e8f0;
-    color: #4a5568;
-}
-
-.story-bias[data-bias="Left"] {
-    background: rgba(49, 130, 206, 0.15);
-    color: #2b6cb0;
-}
-
-.story-bias[data-bias="Lean Left"] {
-    background: rgba(144, 205, 244, 0.3);
-    color: #2c5282;
-}
-
-.story-bias[data-bias="Center"] {
-    background: rgba(160, 174, 192, 0.2);
-    color: #4a5568;
-}
-
-.story-bias[data-bias="Lean Right"] {
-    background: rgba(254, 178, 178, 0.3);
-    color: #9b2c2c;
-}
-
-.story-bias[data-bias="Right"] {
-    background: rgba(252, 129, 129, 0.2);
-    color: #c53030;
-}
 
 /* ========================================
    THEME FILTER BUTTONS

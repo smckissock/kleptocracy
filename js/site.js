@@ -151,7 +151,7 @@ export class Site {
             const shuffled = [...topEntities].sort(() => Math.random() - 0.5);
             
             // Add links one by one, checking if they fit
-            const maxLinks = 6;
+            const maxLinks = 12;
             let addedCount = 0;
             
             for (let i = 0; i < shuffled.length && addedCount < maxLinks; i++) {
@@ -719,7 +719,7 @@ export class Site {
             .fixedBarHeight(ROW_HEIGHT)
             .margins(MARGINS)
             .elasticX(true)
-            .colors(['#6b9fd4'])
+            .colors(['#d8dce0'])
             .label(d => `${d.key}  (${d.value.toLocaleString()})`)
             .labelOffsetX(5)
             .on('pretransition', chart => {
@@ -834,7 +834,6 @@ export class Site {
         if (hasActiveFilters) {
             menuHtml += `<button class="clear-button">Show All</button>`;
         }
-        menuHtml += `<span class="story-filters">${publicationCount} publications</span>`;
         d3.select('#menu-info').html(menuHtml);
 
         // Render filter boxes
@@ -969,16 +968,31 @@ export class Site {
             ? `<div class="story-authors">by ${story.authorList}</div>` 
             : '';
 
-        // Political orientation indicator
-        let biasHtml = '';
-        if (story.bias && story.bias !== 'Unspecified') {
-            biasHtml = `<div class="story-bias" data-bias="${story.bias}">${story.bias}</div>`;
+        // Theme pills - convert slugs to labels
+        let themePillsHtml = '';
+        if (story.themeArray && story.themeArray.length > 0) {
+            const themePills = story.themeArray.map(slug => {
+                const theme = this.themes.find(t => t.slug === slug);
+                const label = theme ? theme.label : slug;
+                return `<span class="story-theme-pill" data-slug="${slug}">${label}</span>`;
+            }).join('');
+            themePillsHtml = `<div class="story-theme-pills">${themePills}</div>`;
         }
 
-        // Use sentence as quote if available
-        const sentenceHtml = story.sentence 
-            ? `<blockquote class="story-quote">${story.sentence}</blockquote>` 
-            : '';
+        // Use sentence as quote if available, highlighting the linkTitle portion
+        // Sentence links to Applebaum's Substack (story.link), card links to publication (story.url)
+        let sentenceHtml = '';
+        if (story.sentence) {
+            let displaySentence = story.sentence;
+            if (story.linkTitle && story.sentence.includes(story.linkTitle)) {
+                displaySentence = story.sentence.replace(
+                    story.linkTitle, 
+                    `<mark class="link-highlight">${story.linkTitle}</mark>`
+                );
+            }
+            const linkUrl = (story.link || story.url) + '?open=false#§kleptocracy-tracker';
+            sentenceHtml = `<blockquote class="story-quote" data-link="${linkUrl}" onclick="event.stopPropagation(); window.open('${linkUrl}', '_blank', 'noopener')">${displaySentence}</blockquote>`;
+        }
 
         return `
             <div class="story" onclick="window.open('${story.url}', '_blank', 'noopener')">
@@ -991,15 +1005,15 @@ export class Site {
                     width="120"
                 >
                 <div class="story-body">
+                    ${sentenceHtml}
+                    <h3 class="story-title">${story.title}</h3>
                     <div class="story-meta">
                         <span class="story-publication">${story.publication}</span>
+                        <span class="story-date">${formatDate(story.date)}</span>
+                        ${authorLine}
                     </div>
-                    <h3 class="story-title">${story.title}</h3>
-                    <div class="story-date">${formatDate(story.date)}</div>
-                    ${authorLine}
-                    ${sentenceHtml}
+                    ${themePillsHtml}
                 </div>
-                ${biasHtml}
             </div>
         `;
     }

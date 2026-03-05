@@ -190,10 +190,10 @@ export class RowChart {
             .margins(MARGINS)
             .elasticX(true)
             .colors(d => {
-                let color = '#6b9fd4';
-                if (attribute === 'publication') color = publicationColorMap[d] || '#718096';
-                if (attribute === 'bias') color = biasColors[d] || '#718096';
-                return color;
+                if (attribute === 'publication') return publicationColorMap[d] || '#718096';
+                if (attribute === 'bias') return biasColors[d] || '#718096';
+                // Light grey for mediaOutletType, country, and other charts
+                return '#d8dce0';
             })
             .label(d => `${d.key}  (${d.value.toLocaleString()})`)
             .labelOffsetX(5)
