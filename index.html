@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kleptocracy Tracker</title>
+    <meta name="description" content="Interactive explorer for Anne Applebaum's Kleptocracy Tracker">
+    
+    <link rel="icon" type="image/x-icon" href="data:;base64,iVBORw0KGgo=">
+    
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/crossfilter2@1.4.8/crossfilter.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/dc@4.2.7/dist/dc.js"></script>
+    
+    <script type="module" src="js/site.js"></script>
+    
+    <link href="https://cdn.jsdelivr.net/npm/dc@4.2.7/dist/style/dc.min.css" rel="stylesheet" type="text/css">
+    
+    <link href="css/layout.css" rel="stylesheet" type="text/css">
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div id="loading-overlay" class="loading-hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="app-container">
+        <!-- Header -->
+        <header id="app-header">
+            <div id="title">
+                <h1>Kleptocracy Tracker</h1>
+                <span class="source-from">from</span> <a href="https://anneapplebaum.substack.com/" target="_blank" rel="noopener" class="source-link">Open Letters by Anne Applebaum</a>
+            </div>
+            <div id="updated-date"></div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="main-content">
+            <!-- Filter Zone -->
+            <div id="filter-zone">
+                <!-- Month chart hidden - uncomment to restore
+                <div class="chart-title" id="month-title">Stories per Month</div>
+                <div id="chart-month"></div>
+                -->
+                
+                <div id="filter-zone-title">Media Coverage</div>
+                
+                <div id="filter-col-publication" class="filter-column">
+                    <div id="chart-publication"></div>
+                </div>
+                
+                <div id="filter-col-author" class="filter-column">
+                    <div id="chart-authors"></div>
+                </div>
+                
+                <div id="filter-col-stacked" class="filter-column">
+                    <div id="chart-bias"></div>
+                    <div id="chart-mediaOutletType"></div>
+                    <div id="chart-country"></div>
+                </div>
+            </div>
+
+            <!-- Results Zone -->
+            <div id="results-zone">
+                <div id="search-section">
+                    <div id="search-input-wrapper">
+                        <input type="text" id="story-search" placeholder="Search for a person, company, city, etc..">
+                        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="M21 21l-4.35-4.35"></path>
+                        </svg>
+                    </div>
+                    <div id="search-examples">
+                        <button id="refresh-examples" class="refresh-button" title="Load different samples">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 2v6h-6"></path>
+                                <path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path>
+                                <path d="M3 22v-6h6"></path>
+                                <path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path>
+                            </svg>
+                        </button>
+                        <span class="examples-label">Click a sample:</span>
+                        <span id="example-links"></span>
+                    </div>
+                </div>
+                <div id="filters"></div>
+                <div id="results-content">
+                    <div id="filter-sidebar">
+                        <!-- Filter checkboxes will go here -->
+                    </div>
+                    <div id="story-column">
+                        <div id="story-header">
+                            <div id="menu-info"></div>
+                            <button id="download-csv" class="download-button" title="Download filtered stories as CSV">
+                                CSV 
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 3v12M12 15l-5-5M12 15l5-5M5 21h14"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="chart-list"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
