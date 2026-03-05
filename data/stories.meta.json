@@ -1,0 +1,10 @@
+{
+  "stories": {
+    "file": "stories.csv.gz",
+    "generated_at": "2026-03-05T11:04:03.411748Z"
+  },
+  "entities": {
+    "file": "entities.csv.gz",
+    "generated_at": "2026-03-04T17:13:47.298757Z"
+  }
+}

@@ -19,11 +19,15 @@ export class Site {
         const overlay = document.getElementById('loading-overlay');
         overlay.classList.replace('loading-hidden', 'loading-visible');
 
+        // Determine data path based on environment
+        const isLocal = location.hostname === '127.0.0.1' || location.hostname === 'localhost';
+        const dataPath = isLocal ? '/data/' : './data/';
+
         // Load stories, entities, and themes in parallel
         const [allStories, entitiesData, themesData] = await Promise.all([
-            d3.csv('./data/stories.csv'),
-            loadGzippedCsv('./data/entities.csv.gz'),
-            d3.csv('./data/themes.csv')
+            d3.csv(dataPath + 'stories.csv'),
+            loadGzippedCsv(dataPath + 'entities.csv.gz'),
+            d3.csv(dataPath + 'themes.csv')
         ]);
         
         // Store themes for UI
