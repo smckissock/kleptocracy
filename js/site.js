@@ -21,9 +21,9 @@ export class Site {
 
         // Load stories, entities, and themes in parallel
         const [allStories, entitiesData, themesData] = await Promise.all([
-            d3.csv('data/stories.csv'),
-            loadGzippedCsv('data/entities.csv.gz'),
-            d3.csv('data/themes.csv')
+            d3.csv('./data/stories.csv'),
+            loadGzippedCsv('./data/entities.csv.gz'),
+            d3.csv('./data/themes.csv')
         ]);
         
         // Store themes for UI
