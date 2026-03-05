@@ -2,11 +2,9 @@
 
 An interactive explorer for news coverage tracked by Anne Applebaum's [Kleptocracy Tracker](https://anneapplebaum.substack.com/) from her Substack newsletter "Open Letters."
 
+**[View the Kleptocracy Tracker](https://smckissock.github.io/kleptocracy/)**
+
 ![Kleptocracy Tracker Screenshot](screenshot.jpg)
-
-## Live Demo
-
-**[View the Kleptocracy Tracker →](https://yourusername.github.io/kleptocracy-tracker/)**
 
 ## Features
 
