@@ -280,7 +280,7 @@ a:active {
 }
 
 #filter-sidebar {
-    width: 200px;
+    width: 160px;
     flex-shrink: 0;
     padding: var(--gap-md);
     overflow-y: auto;
