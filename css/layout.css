@@ -217,8 +217,6 @@ a:active {
     height: calc(100vh - var(--header-height));
     overflow: hidden;
     background-color: var(--results-bg);
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
     margin: var(--gap-md);
     margin-left: 0;
 }
@@ -249,7 +247,7 @@ a:active {
 #menu-info .story-count {
     font-size: 15px;
     font-weight: 600;
-    color: var(--text-dark);
+    color: #4a5568;
 }
 
 #menu-info .story-filters {
@@ -280,7 +278,7 @@ a:active {
 }
 
 #filter-sidebar {
-    width: 160px;
+    width: 180px;
     flex-shrink: 0;
     padding: var(--gap-md);
     overflow-y: auto;

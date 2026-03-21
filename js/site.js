@@ -146,8 +146,10 @@ export class Site {
             // Clear existing links
             linksContainer.innerHTML = '';
             
-            // Pick random entities from top 30 by story count
-            const topEntities = this.entityNames.slice(0, Math.min(30, this.entityNames.length));
+            // Pick random entities from top 30 by story count, excluding Anne Applebaum
+            const topEntities = this.entityNames
+                .filter(n => n !== 'Anne Applebaum')
+                .slice(0, Math.min(30, this.entityNames.length));
             const shuffled = [...topEntities].sort(() => Math.random() - 0.5);
             
             // Add links one by one, checking if they fit
@@ -204,6 +206,12 @@ export class Site {
         
         // Clear existing content
         sidebar.innerHTML = '';
+
+        // Add header
+        const header = document.createElement('div');
+        header.className = 'chart-title sidebar-header';
+        header.textContent = 'TOPICS';
+        sidebar.appendChild(header);
         
         // Create theme buttons from loaded themes.csv
         this.themes.forEach(theme => {
@@ -828,9 +836,10 @@ export class Site {
         const filteredStories = dc.facts.allFiltered();
         const storyCount = filteredStories.length;
         const publicationCount = new Set(filteredStories.map(s => s.publication)).size;
+        const postCount = new Set(filteredStories.map(s => s.link).filter(Boolean)).size;
 
         // Render menu info
-        let menuHtml = `<span class="story-count">${storyCount.toLocaleString()} stories</span>`;
+        let menuHtml = `<span class="story-count">${storyCount.toLocaleString()} citations from ${postCount.toLocaleString()} Kleptocracy Tracker posts</span>`;
         if (hasActiveFilters) {
             menuHtml += `<button class="clear-button">Show All</button>`;
         }
