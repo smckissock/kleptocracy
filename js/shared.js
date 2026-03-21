@@ -81,3 +81,17 @@ export async function loadGzippedCsv(url) {
     const text = await new Response(decompressed).text();
     return d3.csvParse(text);
 }
+
+/**
+ * Load a gzipped JSON file using native DecompressionStream
+ * @param {string} url - URL to the .json.gz file
+ * @returns {Promise<any>} - Parsed JSON, or null if not found
+ */
+export async function loadGzippedJson(url) {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const ds = new DecompressionStream('gzip');
+    const decompressed = response.body.pipeThrough(ds);
+    const text = await new Response(decompressed).text();
+    return JSON.parse(text);
+}

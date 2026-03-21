@@ -4,7 +4,7 @@
  */
 
 import { RowChart } from './rowChart.js';
-import { formatDate, scrollToTop, biasColors, loadGzippedCsv } from './shared.js';
+import { formatDate, scrollToTop, biasColors, loadGzippedCsv, loadGzippedJson } from './shared.js';
 
 export class Site {
     constructor() {
@@ -119,6 +119,7 @@ export class Site {
             const storyScores = JSON.parse(row.storyScores || '{}');
             this.entityIndex[row.name] = {
                 type: row.entityType,
+                slug: row.slug,
                 storyCount: parseInt(row.storyCount) || 0,
                 stories: storyScores
             };
@@ -148,7 +149,7 @@ export class Site {
             
             // Pick random entities from top 30 by story count, excluding Anne Applebaum
             const topEntities = this.entityNames
-                .filter(n => n !== 'Anne Applebaum')
+                .filter(n => n !== 'Anne Applebaum' && n !== 'Joseph R. Biden Jr.')
                 .slice(0, Math.min(30, this.entityNames.length));
             const shuffled = [...topEntities].sort(() => Math.random() - 0.5);
             
@@ -372,11 +373,9 @@ export class Site {
         
         dropdown.innerHTML = matches.map(name => {
             const entity = this.entityIndex[name];
-            const typeIcon = entity.type === 'person' ? '👤' : '📍';
             const storyText = entity.storyCount === 1 ? 'story' : 'stories';
             return `
                 <div class="entity-item" data-entity="${name}">
-                    <span class="entity-icon">${typeIcon}</span>
                     <span class="entity-name">${this.highlightMatch(name, query)}</span>
                     <span class="entity-count">${entity.storyCount} ${storyText}</span>
                 </div>
@@ -430,10 +429,8 @@ export class Site {
         searchInput.classList.add('has-selection');
         
         // Show selected entity chip
-        const typeIcon = entity.type === 'person' ? '👤' : '📍';
         selectedDisplay.innerHTML = `
             <span class="entity-chip">
-                <span class="entity-icon">${typeIcon}</span>
                 <span class="entity-chip-name">${entityName}</span>
                 <button class="entity-chip-remove" title="Clear filter">×</button>
             </span>
@@ -450,7 +447,18 @@ export class Site {
         
         // Filter the dimension using filterFunction to check if story ID is in the set
         this.entityDimension.filterFunction(id => this.entityStoryIds.has(String(id)));
-        
+
+        // Load snippets for this entity
+        this.entitySnippets = null;
+        if (entity.slug) {
+            const isLocal = location.hostname === '127.0.0.1' || location.hostname === 'localhost';
+            const dataPath = isLocal ? '/data/' : './data/';
+            loadGzippedJson(`${dataPath}entity-snippets/${entity.slug}.json.gz`).then(data => {
+                this.entitySnippets = data ? data.snippets : null;
+                this.listStories();
+            });
+        }
+
         // Redraw all charts and refresh
         dc.redrawAll();
         this.refresh();
@@ -465,6 +473,7 @@ export class Site {
         
         this.selectedEntity = null;
         this.entityStoryIds = null;
+        this.entitySnippets = null;
         selectedDisplay.classList.add('hidden');
         searchInput.classList.remove('has-selection');
         
@@ -1003,26 +1012,59 @@ export class Site {
             sentenceHtml = `<blockquote class="story-quote" data-link="${linkUrl}" onclick="event.stopPropagation(); window.open('${linkUrl}', '_blank', 'noopener')">${displaySentence}</blockquote>`;
         }
 
+        // Snippets for selected entity
+        let snippetsHtml = '';
+        if (this.entitySnippets && this.entitySnippets[String(story.id)]) {
+            const entityName = this.selectedEntity;
+            const escapedName = entityName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const countRe = new RegExp(escapedName, 'gi');
+            const highlightRe = new RegExp(`(${escapedName})`, 'gi');
+
+            const allSnippets = this.entitySnippets[String(story.id)];
+
+            // Tag each snippet with its original index and match count
+            const ranked = allSnippets
+                .map((s, i) => ({ s, i, count: (s.match(countRe) || []).length }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 3)
+                .sort((a, b) => a.i - b.i); // restore original order
+
+            const snippetItems = ranked
+                .map(({ s }) => {
+                    const highlighted = s.replace(highlightRe, '<mark class="snippet-highlight">$1</mark>');
+                    return `<div class="story-snippet">${highlighted}</div>`;
+                })
+                .join('');
+            snippetsHtml = `<div class="story-snippets"><div class="story-snippets-label">Excerpts:</div>${snippetItems}</div>`;
+        }
+
         return `
             <div class="story" onclick="window.open('${story.url}', '_blank', 'noopener')">
-                <img
-                    class="story-image"
-                    src="${story.image}"
-                    onload="this.classList.add('loaded')"
-                    onerror="this.style.display='none'"
-                    height="90"
-                    width="120"
-                >
-                <div class="story-body">
+                <div class="story-header">
                     ${sentenceHtml}
-                    <h3 class="story-title">${story.title}</h3>
-                    <div class="story-meta">
-                        <span class="story-publication">${story.publication}</span>
-                        <span class="story-date">${formatDate(story.date)}</span>
-                        ${authorLine}
-                    </div>
-                    ${themePillsHtml}
                 </div>
+                <div class="story-article">
+                    <div class="story-article-top">
+                        <img
+                            class="story-image"
+                            src="${story.image}"
+                            onload="this.classList.add('loaded')"
+                            onerror="this.style.display='none'"
+                            height="90"
+                            width="120"
+                        >
+                        <div class="story-article-meta">
+                            <h3 class="story-title">${story.title}</h3>
+                            <div class="story-meta">
+                                <span class="story-publication">${story.publication}</span>
+                                <span class="story-date">${formatDate(story.date)}</span>
+                                ${authorLine}
+                            </div>
+                        </div>
+                    </div>
+                    ${snippetsHtml}
+                </div>
+                ${themePillsHtml}
             </div>
         `;
     }
