@@ -5,6 +5,7 @@
 
 import { RowChart } from './rowChart.js';
 import { formatDate, scrollToTop, biasColors, loadGzippedCsv, loadGzippedJson } from './shared.js';
+import { trackPageView, trackClick } from './analytics.js';
 
 export class Site {
     constructor() {
@@ -979,6 +980,19 @@ export class Site {
         }
 
         d3.select('#chart-list').html(html);
+
+        d3.select('#chart-list').selectAll('.story').on('click', function() {
+            const url = d3.select(this).attr('data-story-url');
+            trackClick(url);
+            window.open(url, '_blank', 'noopener');
+        });
+
+        d3.select('#chart-list').selectAll('.story-quote[data-link]').on('click', function(event) {
+            event.stopPropagation();
+            const url = d3.select(this).attr('data-link');
+            trackClick(url);
+            window.open(url, '_blank', 'noopener');
+        });
     }
 
     renderStoryCard(story) {
@@ -1009,7 +1023,7 @@ export class Site {
                 );
             }
             const linkUrl = (story.link || story.url) + '?open=false#§kleptocracy-tracker';
-            sentenceHtml = `<blockquote class="story-quote" data-link="${linkUrl}" onclick="event.stopPropagation(); window.open('${linkUrl}', '_blank', 'noopener')">${displaySentence}</blockquote>`;
+            sentenceHtml = `<blockquote class="story-quote" data-link="${linkUrl}">${displaySentence}</blockquote>`;
         }
 
         // Snippets for selected entity
@@ -1039,7 +1053,7 @@ export class Site {
         }
 
         return `
-            <div class="story" onclick="window.open('${story.url}', '_blank', 'noopener')">
+            <div class="story" data-story-url="${story.url}">
                 <div class="story-header">
                     ${sentenceHtml}
                 </div>
@@ -1101,3 +1115,4 @@ export class Site {
 }
 
 const site = new Site();
+trackPageView();
